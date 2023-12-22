@@ -53,6 +53,10 @@ const LoginIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   }
 }))
 
+// ** Redux
+import { useSelector } from 'react-redux'
+import { RootState } from 'src/store'
+
 const LoginIllustration = styled('img')(({ theme }) => ({
   maxWidth: '48rem',
   [theme.breakpoints.down('xl')]: {
@@ -119,13 +123,13 @@ const LoginPage = () => {
   const bgColors = useBgColor()
   const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
+  const store = useSelector((state: RootState) => state.user)
 
   // ** Vars
   const { skin } = settings
 
   const {
     control,
-    setError,
     handleSubmit,
     formState: { errors }
   } = useForm({
@@ -136,12 +140,7 @@ const LoginPage = () => {
 
   const onSubmit = (data: FormData) => {
     const { email, password } = data
-    auth.login({ email, password, rememberMe }, () => {
-      setError('email', {
-        type: 'manual',
-        message: 'Email or Password is invalid'
-      })
-    })
+    auth.login({ email, password, rememberMe })
   }
 
   const imageSource = skin === 'bordered' ? 'auth-v2-login-illustration-bordered' : 'auth-v2-login-illustration'
@@ -341,7 +340,7 @@ const LoginPage = () => {
                 </Typography>
               </Box>
               <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 7 }}>
-                Login
+                {store.authenticating ? 'Loading...' : 'Login'}
               </Button>
               <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
                 <Typography sx={{ mr: 2, color: 'text.secondary' }}>New on our platform?</Typography>

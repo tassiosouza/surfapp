@@ -117,6 +117,8 @@ const App = (props: ExtendedAppProps) => {
 
   const aclAbilities = Component.acl ?? defaultACLObj
 
+  // Apollo Client
+
   return (
     <Provider store={store}>
       <CacheProvider value={emotionCache}>
@@ -151,7 +153,7 @@ const App = (props: ExtendedAppProps) => {
           </SettingsProvider>
         </AuthProvider>
       </CacheProvider>
-    </Provider>
+    </Provider >
   )
 }
 
