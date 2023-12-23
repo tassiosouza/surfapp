@@ -1,4 +1,4 @@
-export type LoginCallbackType = (error: boolean, message: string, user: any) => void
+export type LoginCallbackType = (error: boolean, message: string, user: any, token: string, rememberMe: boolean) => void
 
 export type LoginParams = {
   email: string

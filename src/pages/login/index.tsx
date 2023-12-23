@@ -1,11 +1,10 @@
 // ** React Imports
-import { useState, ReactNode, MouseEvent } from 'react'
+import { useState, ReactNode, MouseEvent, forwardRef } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
 
 // ** MUI Components
-import Alert from '@mui/material/Alert'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import Checkbox from '@mui/material/Checkbox'
@@ -21,6 +20,8 @@ import FormHelperText from '@mui/material/FormHelperText'
 import InputAdornment from '@mui/material/InputAdornment'
 import Typography, { TypographyProps } from '@mui/material/Typography'
 import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -44,6 +45,9 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 
+import { setShowNotice } from '../../store/apps/user'
+import { useDispatch } from 'react-redux'
+
 // ** Styled Components
 const LoginIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   padding: theme.spacing(20),
@@ -52,6 +56,13 @@ const LoginIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
     padding: theme.spacing(10)
   }
 }))
+
+const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref,
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 // ** Redux
 import { useSelector } from 'react-redux'
@@ -104,8 +115,8 @@ const schema = yup.object().shape({
 })
 
 const defaultValues = {
-  password: 'admin',
-  email: 'admin@materialize.com'
+  password: 'Sur@4967#',
+  email: 'souza.tassio@gmail.com'
 }
 
 interface FormData {
@@ -124,9 +135,18 @@ const LoginPage = () => {
   const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
   const store = useSelector((state: RootState) => state.user)
+  const dispatch = useDispatch();
 
   // ** Vars
   const { skin } = settings
+
+  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return
+    }
+
+    dispatch(setShowNotice(false))
+  };
 
   const {
     control,
@@ -395,7 +415,12 @@ const LoginPage = () => {
           </BoxWrapper>
         </Box>
       </RightWrapper>
-    </Box>
+      <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} open={store.showNotice} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+          {store.message}
+        </Alert>
+      </Snackbar>
+    </Box >
   )
 }
 

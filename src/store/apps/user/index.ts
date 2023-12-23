@@ -37,7 +37,7 @@ export const authenticateUser = createAsyncThunk('appUsers/authenticateUser', as
   console.log('message: ' + message)
   console.log('data: ' + JSON.stringify(data))
 
-  return { error, message, data, callback }
+  return { error, message, data, params, callback }
 })
 
 // ** Add User
@@ -74,11 +74,19 @@ export const appUsersSlice = createSlice({
     params: {},
     allData: [],
     authenticating: false,
-    user: null
+    user: null,
+    showNotice: false,
+    message: ''
   },
   reducers: {
     setAuthenticating: (state, action) => {
       state.authenticating = action.payload
+    },
+    setShowNotice: (state, action) => {
+      state.showNotice = action.payload
+    },
+    setMessage: (state, action) => {
+      state.message = action.payload
     }
   },
   extraReducers: builder => {
@@ -89,17 +97,26 @@ export const appUsersSlice = createSlice({
       state.allData = action.payload.allData
     })
     builder.addCase(authenticateUser.fulfilled, (state, action) => {
-      console.log('payload', JSON.stringify(action.payload))
-      state.user = action.payload.data.login.user
-      console.log('user store: ' + JSON.stringify(state.user))
-
-      // state.authenticating = false
-      if (action.payload.callback) {
-        action.payload.callback(action.payload.error, action.payload.message, state.user)
+      if (action.payload.data) {
+        state.user = action.payload.data.login.user
+        if (action.payload.callback) {
+          action.payload.callback(
+            action.payload.error,
+            action.payload.message,
+            state.user,
+            action.payload.data.login.authToken,
+            action.payload.params.rememberMe ? action.payload.params.rememberMe : false
+          )
+        }
+      } else {
+        state.showNotice = action.payload.error
+        state.message = action.payload.message
       }
+
+      state.authenticating = false
     })
   }
 })
 
-export const { setAuthenticating } = appUsersSlice.actions
+export const { setAuthenticating, setShowNotice, setMessage } = appUsersSlice.actions
 export default appUsersSlice.reducer
