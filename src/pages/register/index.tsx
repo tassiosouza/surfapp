@@ -219,8 +219,9 @@ const Register = () => {
               <Typography variant='body2'>Make your app management easy and fun!</Typography>
             </Box>
             <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
-              <TextField autoFocus fullWidth sx={{ mb: 4 }} label='Username' placeholder='johndoe' />
-              <TextField fullWidth label='Email' sx={{ mb: 4 }} placeholder='user@email.com' />
+              <TextField autoFocus fullWidth sx={{ mb: 4 }} label='First Name' />
+              <TextField autoFocus fullWidth sx={{ mb: 4 }} label='Last Name' />
+              <TextField fullWidth label='Email' sx={{ mb: 4 }} />
               <FormControl fullWidth>
                 <InputLabel htmlFor='auth-login-v2-password'>Password</InputLabel>
                 <OutlinedInput

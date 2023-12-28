@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const LOGIN = gql`
-  mutation MyMutation($input: LoginInput!) {
+  mutation login($input: LoginInput!) {
     login(input: $input) {
       authToken
       user {
@@ -13,6 +13,20 @@ export const LOGIN = gql`
         roles {
           nodes {
             name
+          }
+        }
+      }
+    }
+  }
+`
+
+export const REGISTER = gql`
+  mutation register($input: RegisterInput!) {
+    registerUser(input: $input) {
+      user {
+        roles {
+          nodes {
+            id
           }
         }
       }

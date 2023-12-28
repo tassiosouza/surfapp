@@ -360,7 +360,7 @@ const LoginPage = () => {
                 </Typography>
               </Box>
               <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 7 }}>
-                {store.authenticating ? 'Loading...' : 'Login'}
+                {store.loading ? 'Loading...' : 'Login'}
               </Button>
               <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
                 <Typography sx={{ mr: 2, color: 'text.secondary' }}>New on our platform?</Typography>

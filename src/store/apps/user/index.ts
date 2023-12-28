@@ -1,11 +1,11 @@
 // ** Redux Imports
 import { Dispatch } from 'redux'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { performLogin } from 'src/repository/apps/ user'
+import { performLogin, createUser } from 'src/repository/apps/user'
 
 // ** Axios Imports
 import axios from 'axios'
-import { LoginParams } from 'src/context/types'
+import { LoginParams, RegisterParams } from 'src/context/types'
 
 interface DataParams {
   q: string
@@ -38,6 +38,17 @@ export const authenticateUser = createAsyncThunk('appUsers/authenticateUser', as
   console.log('data: ' + JSON.stringify(data))
 
   return { error, message, data, params, callback }
+})
+
+// ** Register User
+export const registerUser = createAsyncThunk('appUsers/registerUser', async (params: RegisterParams) => {
+  const { error, message, data } = await createUser(params)
+
+  console.log('error: ' + error)
+  console.log('message: ' + message)
+  console.log('data: ' + JSON.stringify(data))
+
+  return { error, message, data }
 })
 
 // ** Add User
@@ -73,14 +84,14 @@ export const appUsersSlice = createSlice({
     total: 1,
     params: {},
     allData: [],
-    authenticating: false,
+    loading: false,
     user: null,
     showNotice: false,
     message: ''
   },
   reducers: {
     setAuthenticating: (state, action) => {
-      state.authenticating = action.payload
+      state.loading = action.payload
     },
     setShowNotice: (state, action) => {
       state.showNotice = action.payload
@@ -113,7 +124,15 @@ export const appUsersSlice = createSlice({
         state.message = action.payload.message
       }
 
-      state.authenticating = false
+      state.loading = false
+    })
+    builder.addCase(registerUser.fulfilled, (state, action) => {
+      if (action.payload.data) {
+      } else {
+        state.showNotice = action.payload.error
+        state.message = action.payload.message
+      }
+      state.showNotice = true
     })
   }
 })
