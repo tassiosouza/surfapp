@@ -146,7 +146,7 @@ const LoginPage = () => {
     }
 
     dispatch(setShowNotice(false))
-  };
+  }
 
   const {
     control,

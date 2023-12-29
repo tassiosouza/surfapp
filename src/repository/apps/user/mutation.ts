@@ -21,8 +21,10 @@ export const LOGIN = gql`
 `
 
 export const REGISTER = gql`
-  mutation register($input: RegisterInput!) {
-    registerUser(input: $input) {
+  mutation ($email: String!, $username: String!, $lastName: String!, $password: String!, $firstName: String!) {
+    registerUser(
+      input: { email: $email, username: $username, lastName: $lastName, password: $password, firstName: $firstName }
+    ) {
       user {
         roles {
           nodes {

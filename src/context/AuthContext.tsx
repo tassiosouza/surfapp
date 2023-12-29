@@ -14,7 +14,7 @@ import { AuthValuesType, LoginParams, UserDataType } from './types'
 import { useDispatch } from 'react-redux'
 
 // ** User Store
-import { authenticateUser, setAuthenticating } from '../store/apps/user'
+import { authenticateUser, setLoading } from '../store/apps/user'
 import { AppDispatch } from 'src/store'
 
 // ** Defaults
@@ -36,7 +36,7 @@ type Props = {
 const AuthProvider = ({ children }: Props) => {
   // ** States
   const [user, setUser] = useState<UserDataType | null>(defaultProvider.user)
-  const [loading, setLoading] = useState<boolean>(defaultProvider.loading)
+  const [pageLoading, setPageLoading] = useState<boolean>(defaultProvider.loading)
 
   // ** Hooks
   const router = useRouter()
@@ -51,14 +51,14 @@ const AuthProvider = ({ children }: Props) => {
 
       if (storedToken && userData) {
         setUser(JSON.parse(userData))
-        setLoading(false)
+        setPageLoading(false)
       } else {
         localStorage.removeItem('userData')
         localStorage.removeItem('refreshToken')
         localStorage.removeItem('accessToken')
         router.replace('/login')
       }
-      setLoading(false)
+      setPageLoading(false)
     }
 
     initAuth()
@@ -71,13 +71,11 @@ const AuthProvider = ({ children }: Props) => {
     console.log(JSON.stringify('store object: ' + user))
     console.log(message)
     if (!error) {
-      setLoading(true)
+      setPageLoading(true)
 
       const returnUrl = router.query.returnUrl
       console.log('trying to set user: ' + JSON.stringify(user))
       setUser(user)
-
-      console.log('rmber: ' + rememberMe)
 
       if (rememberMe) {
         console.log('setting storage')
@@ -88,42 +86,16 @@ const AuthProvider = ({ children }: Props) => {
       const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
 
       router.replace(redirectURL as string)
-      setLoading(false)
+      setPageLoading(false)
     }
   }
 
   const handleLogin = (params: LoginParams) => {
 
     // Use the Apollo Client to make the authenticated GraphQL query
-    dispatch(setAuthenticating(true))
+    dispatch(setLoading(true))
     dispatch(authenticateUser({ ...params, callback: loginCallback }))
 
-
-    // client.mutate({
-    //   mutation: LOGIN,
-    //   variables: {
-    //     input: {
-    //       username: params.email,
-    //       password: params.password,
-    //     },
-    //   },
-    // })
-    //   .then(response => {
-    //     console.log(response)
-    //     params.rememberMe
-    //       ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.login.authToken)
-    //       : null
-
-    //     const returnUrl = router.query.returnUrl
-
-    //     setUser({ ...response.data.login.user })
-    //     params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.login.user)) : null
-
-    //     const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
-
-    //     router.replace(redirectURL as string)
-    //   })
-    //   .catch(error => console.error('Error:', error));
   }
 
   const handleLogout = () => {
@@ -135,9 +107,9 @@ const AuthProvider = ({ children }: Props) => {
 
   const values = {
     user,
-    loading,
+    loading: pageLoading,
     setUser,
-    setLoading,
+    setLoading: setPageLoading,
     login: handleLogin,
     logout: handleLogout
   }

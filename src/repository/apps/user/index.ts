@@ -30,7 +30,6 @@ export const performLogin = async (params: LoginParams) => {
 }
 
 export const createUser = async (params: RegisterParams) => {
-  console.log('trying to perform register:')
   let response = null
   let message = 'Internal server error'
 
@@ -38,16 +37,14 @@ export const createUser = async (params: RegisterParams) => {
     response = await apolloClient.mutate({
       mutation: REGISTER,
       variables: {
-        input: {
-          firstName: params.firstName,
-          lastName: params.lastName,
-          email: params.email,
-          username: params.email,
-          password: params.password
-        }
+        email: params.email,
+        username: params.email,
+        lastName: params.lastName,
+        password: params.password,
+        firstName: params.firstName
       }
     })
-    message = 'success'
+    message = 'Successfully registered'
   } catch (e: any) {
     message = e.message
   }

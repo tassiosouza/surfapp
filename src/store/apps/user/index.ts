@@ -90,7 +90,7 @@ export const appUsersSlice = createSlice({
     message: ''
   },
   reducers: {
-    setAuthenticating: (state, action) => {
+    setLoading: (state, action) => {
       state.loading = action.payload
     },
     setShowNotice: (state, action) => {
@@ -127,15 +127,12 @@ export const appUsersSlice = createSlice({
       state.loading = false
     })
     builder.addCase(registerUser.fulfilled, (state, action) => {
-      if (action.payload.data) {
-      } else {
-        state.showNotice = action.payload.error
-        state.message = action.payload.message
-      }
+      state.message = action.payload.message
       state.showNotice = true
+      state.loading = false
     })
   }
 })
 
-export const { setAuthenticating, setShowNotice, setMessage } = appUsersSlice.actions
+export const { setLoading, setShowNotice, setMessage } = appUsersSlice.actions
 export default appUsersSlice.reducer
