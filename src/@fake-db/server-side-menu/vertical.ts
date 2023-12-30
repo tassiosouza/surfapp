@@ -12,6 +12,10 @@ const navigation: VerticalNavItemsType = [
     badgeColor: 'error',
     children: [
       {
+        title: 'Home',
+        path: '/dashboards/home'
+      },
+      {
         title: 'CRM',
         path: '/dashboards/crm'
       },
@@ -352,7 +356,6 @@ const navigation: VerticalNavItemsType = [
     icon: 'mdi:google-circles-extended'
   },
   {
-    
     title: 'Cards',
     icon: 'mdi:credit-card-outline',
     children: [
@@ -467,7 +470,7 @@ const navigation: VerticalNavItemsType = [
       {
         title: 'More',
         path: '/components/more'
-      },
+      }
     ]
   },
   {
@@ -528,7 +531,7 @@ const navigation: VerticalNavItemsType = [
       {
         title: 'Input Mask',
         path: '/forms/form-elements/input-mask'
-      },
+      }
     ]
   },
   {
