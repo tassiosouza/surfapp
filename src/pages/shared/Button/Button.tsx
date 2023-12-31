@@ -1,5 +1,5 @@
 import React, { ButtonHTMLAttributes, FC } from "react";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { LocationStates } from "src/routers/types";
 import twFocusClass from "src/utils/twFocusClass";
 
@@ -62,16 +62,16 @@ const Button: FC<ButtonProps> = ({
   };
 
   if (!!href) {
-    return (
-      <Link
-        to={href}
-        target={targetBlank ? "_blank" : undefined}
-        className={`${CLASSES} `}
-        onClick={onClick}
-        rel="noopener noreferrer"
-      >
-        {children || `This is Link`}
-      </Link>
+    return (<></>
+      // <Link
+      //   to={href}
+      //   target={targetBlank ? "_blank" : undefined}
+      //   className={`${CLASSES} `}
+      //   onClick={onClick}
+      //   rel="noopener noreferrer"
+      // >
+      //   {children || `This is Link`}
+      // </Link>
     );
   }
 

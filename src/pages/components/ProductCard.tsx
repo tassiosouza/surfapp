@@ -16,7 +16,7 @@ import ProductStatus from "./ProductStatus";
 import { Product, PRODUCTS } from "src/@fake-db/data/data";
 import ButtonPrimary from "../shared/Button/ButtonPrimary";
 import ButtonSecondary from "../shared/Button/ButtonSecondary";
-// import NcImage from "../shared/NcImage/NcImage";
+import NcImage from "../shared/NcImage/NcImage";
 
 export interface ProductCardProps {
   className?: string;
@@ -244,13 +244,13 @@ const ProductCard: FC<ProductCardProps> = ({
         {/* <Link to={"/product-detail"} className="absolute inset-0"></Link> */}
 
         <div className="relative flex-shrink-0 bg-slate-50 dark:bg-slate-300 rounded-3xl overflow-hidden z-1 group">
-          {/* <Link to={"/product-detail"} className="block">
-            <NcImage
-              containerClassName="flex aspect-w-11 aspect-h-12 w-full h-0"
-              src={image}
-              className="object-cover w-full h-full drop-shadow-xl"
-            />
-          </Link> */}
+          {/* <Link to={"/product-detail"} className="block"> */}
+          <NcImage
+            containerClassName="flex aspect-w-11 aspect-h-12 w-full h-0"
+            src={image}
+            className="object-cover w-full h-full drop-shadow-xl"
+          />
+          {/* </Link> */}
 
           <ProductStatus status={status} />
 

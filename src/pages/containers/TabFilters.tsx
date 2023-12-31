@@ -119,7 +119,7 @@ const TabFilters = () => {
     );
   };
 
-  // OK
+  // // OK
   const renderTabsCategories = () => {
     return (
       <Popover className="relative">
@@ -256,7 +256,7 @@ const TabFilters = () => {
     );
   };
 
-  // OK
+  // // OK
   const renderTabsSortOrder = () => {
     return (
       <Popover className="relative">
@@ -606,7 +606,7 @@ const TabFilters = () => {
     );
   };
 
-  // OK
+  // // OK
   const renderTabsPriceRage = () => {
     return (
       <Popover className="relative">
@@ -750,7 +750,7 @@ const TabFilters = () => {
     );
   };
 
-  // OK
+  // // OK
   const renderTabIsOnsale = () => {
     return (
       <div
