@@ -1,20 +1,32 @@
 // ** MUI Imports
 // import Grid from '@mui/material/Grid'
-import React, { FC } from "react";
+import React, { useEffect, FC } from "react";
 // import { Helmet } from "react-helmet-async";
 import Pagination from "src/pages/shared/Pagination/Pagination";
 import TabFilters from 'src/pages/containers/TabFilters'
 import { PRODUCTS } from "../../../@fake-db/data/data";
 import ProductCard from 'src/pages/components/ProductCard';
 import ButtonPrimary from "src/pages/shared/Button/ButtonPrimary";
+
 // import SectionPromo1 from 'src/pages/components/SectionPromo1';
 // import SectionSliderCollections from "src/pages/components/SectionSliderLargeProduct";
+import { useDispatch } from "react-redux";
+import { fetchProducts, setLoading } from '../../../store/apps/product'
+import { AppDispatch } from "src/store";
 
 export interface PageCollectionProps {
   className?: string;
 }
 
 const HomeDashboard: FC<PageCollectionProps> = ({ className = "" }) => {
+
+  // ** Redux
+  const dispatch = useDispatch<AppDispatch>()
+  useEffect(() => {
+    dispatch(setLoading(true))
+    dispatch(fetchProducts())
+  })
+
   return (
     <div
       className={`nc-PageCollection ${className}`}
