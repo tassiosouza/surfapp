@@ -46,6 +46,8 @@ const AuthProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
+
+      console.log('init auth')
       const storedToken = window.localStorage.getItem('accessToken')!
       const userData = window.localStorage.getItem('userData')!
 

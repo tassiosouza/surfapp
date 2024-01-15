@@ -45,6 +45,27 @@ const AclGuard = (props: AclGuardProps) => {
   console.log(auth)
 
   useEffect(() => {
+    const initAuth = async (): Promise<void> => {
+
+      console.log('init auth')
+      const storedToken = window.localStorage.getItem('accessToken')!
+      const userData = window.localStorage.getItem('userData')!
+
+      if (storedToken && userData) {
+        console.log('refresh token')
+      } else {
+        localStorage.removeItem('userData')
+        localStorage.removeItem('refreshToken')
+        localStorage.removeItem('accessToken')
+        router.replace('/login')
+      }
+    }
+
+    initAuth()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
     if (auth.user && /*auth.user.role   &&*/ !guestGuard && router.route === '/') {
       const homeRoute = getHomeRoute(/*auth.user.role*/'admin')
       router.replace(homeRoute)

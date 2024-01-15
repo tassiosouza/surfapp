@@ -3,6 +3,11 @@ import { Dispatch } from 'redux'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { getProducts } from 'src/repository/apps/product/'
 
+interface Redux {
+  getState: any
+  dispatch: Dispatch<any>
+}
+
 // ** Fetch Users
 export const fetchProducts = createAsyncThunk('appUsers/fetchData', async () => {
   const { error, message, data } = await getProducts()
@@ -11,7 +16,7 @@ export const fetchProducts = createAsyncThunk('appUsers/fetchData', async () => 
 })
 
 export const appProductSlice = createSlice({
-  name: 'appProduct',
+  name: 'appProducts',
   initialState: {
     products: [],
     loading: false
@@ -23,7 +28,9 @@ export const appProductSlice = createSlice({
   },
   extraReducers: builder => {
     builder.addCase(fetchProducts.fulfilled, (state, action) => {
+      console.log('product return: ' + JSON.stringify(action.payload.data))
       state.loading = false
+      state.products = action.payload.data
     })
   }
 })
