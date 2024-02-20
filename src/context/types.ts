@@ -12,6 +12,9 @@ export type RegisterParams = {
   lastName: string
   email: string
   password: string
+  description: string
+  imageUrl: string
+  socialLoginCallback?: LoginCallbackType
 }
 
 export type UserDataType = {

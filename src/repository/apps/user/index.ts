@@ -3,7 +3,6 @@ import apolloClient from '../../apollo-client'
 import { LoginParams, RegisterParams } from 'src/context/types'
 
 export const performLogin = async (params: LoginParams) => {
-  console.log('trying to perform login:')
   let response = null
   let message = 'Internal server error'
 
@@ -41,7 +40,9 @@ export const createUser = async (params: RegisterParams) => {
         username: params.email,
         lastName: params.lastName,
         password: params.password,
-        firstName: params.firstName
+        firstName: params.firstName,
+        description: params.description,
+        websiteUrl: params.imageUrl
       }
     })
     message = 'Successfully registered'
@@ -49,9 +50,23 @@ export const createUser = async (params: RegisterParams) => {
     message = e.message
   }
 
+  let data = null
+  if (response?.data) {
+    data = {
+      authToken: response.data.registerUser.user.jwtAuthToken,
+      user: {
+        email: params.email,
+        firstName: params.firstName,
+        id: response.data.registerUser.user.id,
+        lastName: params.lastName,
+        name: params.firstName + ' ' + params.lastName,
+        role: 'admin'
+      }
+    }
+  }
   return {
     error: !message.includes('success'),
     message: message,
-    data: response ? response.data : null
+    data: data
   }
 }

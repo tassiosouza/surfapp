@@ -21,9 +21,60 @@ export const LOGIN = gql`
 `
 
 export const REGISTER = gql`
-  mutation ($email: String!, $username: String!, $lastName: String!, $password: String!, $firstName: String!) {
+  mutation (
+    $email: String!
+    $username: String!
+    $lastName: String!
+    $password: String!
+    $firstName: String!
+    $description: String!
+    $websiteUrl: String
+  ) {
     registerUser(
-      input: { email: $email, username: $username, lastName: $lastName, password: $password, firstName: $firstName }
+      input: {
+        email: $email
+        username: $username
+        lastName: $lastName
+        password: $password
+        firstName: $firstName
+        description: $description
+        websiteUrl: $websiteUrl
+      }
+    ) {
+      user {
+        id
+        jwtAuthToken
+        jwtRefreshToken
+        roles {
+          nodes {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`
+export const USER = gql`
+  mutation (
+    $email: String!
+    $username: String!
+    $lastName: String!
+    $password: String!
+    $firstName: String!
+    $description: String!
+    $websiteUrl: String
+  ) {
+    registerUser(
+      input: {
+        email: $email
+        username: $username
+        lastName: $lastName
+        password: $password
+        firstName: $firstName
+        description: $description
+        websiteUrl: $websiteUrl
+      }
     ) {
       user {
         roles {

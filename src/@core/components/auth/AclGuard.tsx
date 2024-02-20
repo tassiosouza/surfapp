@@ -23,6 +23,7 @@ import { useAuth } from 'src/hooks/useAuth'
 
 // ** Util Import
 import getHomeRoute from 'src/layouts/components/acl/getHomeRoute'
+import IndexView from 'src/views/IndexView'
 
 interface AclGuardProps {
   children: ReactNode
@@ -42,22 +43,24 @@ const AclGuard = (props: AclGuardProps) => {
   // ** Vars
   let ability: AppAbility
 
-  console.log(auth)
-
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
 
-      console.log('init auth')
       const storedToken = window.localStorage.getItem('accessToken')!
       const userData = window.localStorage.getItem('userData')!
-
       if (storedToken && userData) {
         console.log('refresh token')
-      } else {
-        localStorage.removeItem('userData')
-        localStorage.removeItem('refreshToken')
-        localStorage.removeItem('accessToken')
-        router.replace('/login')
+        // auth.setUser(JSON.parse(userData))
+      }
+      if (router.pathname != '/') {
+        if (storedToken && userData) {
+          console.log('refresh token')
+        } else {
+          localStorage.removeItem('userData')
+          localStorage.removeItem('refreshToken')
+          localStorage.removeItem('accessToken')
+          router.replace('/login')
+        }
       }
     }
 
@@ -99,11 +102,12 @@ const AclGuard = (props: AclGuardProps) => {
 
     return <AbilityContext.Provider value={ability}>{children}</AbilityContext.Provider>
   }
-
+  console.log(auth.user ? 'logged' : 'not logged')
   // Render Not Authorized component if the current user has limited access
   return (
     <BlankLayout>
-      <NotAuthorized />
+      {/* <NotAuthorized /> */}
+      <IndexView></IndexView>
     </BlankLayout>
   )
 }

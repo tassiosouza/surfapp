@@ -47,19 +47,21 @@ const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
 
-      console.log('init auth')
       const storedToken = window.localStorage.getItem('accessToken')!
       const userData = window.localStorage.getItem('userData')!
 
-      if (storedToken && userData) {
-        setUser(JSON.parse(userData))
-        setPageLoading(false)
-      } else {
-        localStorage.removeItem('userData')
-        localStorage.removeItem('refreshToken')
-        localStorage.removeItem('accessToken')
-        router.replace('/login')
+      if (router.pathname != '/') {
+        if (storedToken && userData) {
+          setUser(JSON.parse(userData))
+          setPageLoading(false)
+        } else {
+          localStorage.removeItem('userData')
+          localStorage.removeItem('refreshToken')
+          localStorage.removeItem('accessToken')
+          router.replace('/login')
+        }
       }
+
       setPageLoading(false)
     }
 
@@ -69,18 +71,13 @@ const AuthProvider = ({ children }: Props) => {
 
   const loginCallback = (error: boolean, message: string, user: any, token: string, rememberMe: boolean) => {
     // set loading to false
-
-    console.log(JSON.stringify('store object: ' + user))
-    console.log(message)
     if (!error) {
       setPageLoading(true)
 
       const returnUrl = router.query.returnUrl
-      console.log('trying to set user: ' + JSON.stringify(user))
       setUser(user)
 
       if (rememberMe) {
-        console.log('setting storage')
         window.localStorage.setItem('accessToken', token)
         window.localStorage.setItem('userData', JSON.stringify(user))
       }

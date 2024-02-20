@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, ReactNode, MouseEvent, forwardRef } from 'react'
+import { useState, ReactNode, MouseEvent, forwardRef, useCallback, useEffect } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
@@ -22,6 +22,9 @@ import Typography, { TypographyProps } from '@mui/material/Typography'
 import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
+
+const REDIRECT_URI =
+  'http://localhost:3000/register/';
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -48,6 +51,12 @@ import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 import { setShowNotice } from '../../store/apps/user'
 import { useDispatch } from 'react-redux'
 
+// import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
+
+import { GoogleLogin } from '@react-oauth/google';
+
+import { jwtDecode } from 'jwt-decode';
+
 // ** Styled Components
 const LoginIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   padding: theme.spacing(20),
@@ -56,6 +65,19 @@ const LoginIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
     padding: theme.spacing(10)
   }
 }))
+
+const StyledGoogleLogin = styled(GoogleLogin)`
+  width: 100%;
+  border-radius: 50px !important;
+  padding: 0px 10px !important;
+  border: 1px solid #82cbec !important;
+  box-shadow: none !important;
+  & span {
+    width: 70%;
+    font-weight: 600 !important;
+    font-size: 15px;
+  }
+`;
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -123,10 +145,23 @@ interface FormData {
   email: string
   password: string
 }
+interface IDecodedToken {
+  exp: number;
+  jti: string;
+  given_name: string;
+  family_name: string;
+  email: string;
+  // Add other properties as needed
+}
+
 
 const LoginPage = () => {
+
   const [rememberMe, setRememberMe] = useState<boolean>(true)
   const [showPassword, setShowPassword] = useState<boolean>(false)
+
+  const [provider, setProvider] = useState('');
+  const [profile, setProfile] = useState<any>();
 
   // ** Hooks
   const auth = useAuth()
@@ -163,19 +198,57 @@ const LoginPage = () => {
     auth.login({ email, password, rememberMe })
   }
 
+  const socialLoginCallback = (error: boolean, message: string, user: any, token: string, rememberMe: boolean) => {
+    auth.setUser(user)
+    window.localStorage.setItem('accessToken', token)
+    window.localStorage.setItem('userData', JSON.stringify(user))
+  }
+
+  const responseGoogle = (response: any) => {
+
+    if ('credential' in response) {
+      // Call the store function to register the user
+
+      // Build the token object
+      const decodedToken: IDecodedToken = jwtDecode(response.credential);
+      const token = {
+        "access_token": response.credential,
+        "expires_in": decodedToken.exp,  // This value is static, replace with actual value if available
+        "id_token": decodedToken.jti,
+        "token_type": "Bearer"
+      };
+
+      const values = {
+        firstName: decodedToken.given_name,
+        lastName: decodedToken.family_name,
+        email: decodedToken.email,
+        password: 'defaultPassword123!',
+        agreeToTerms: true,
+        description: JSON.stringify(token),
+        imageUrl: '',
+        socialLoginCallback: socialLoginCallback
+      };
+      auth.login({ email: values.email, password: 'defaultPassword123!', rememberMe: true })
+    }
+    else {
+      window.alert('Google login response failed. Please try again.');
+    }
+  }
+
   const imageSource = skin === 'bordered' ? 'auth-v2-login-illustration-bordered' : 'auth-v2-login-illustration'
 
   return (
     <Box className='content-right'>
       {!hidden ? (
         <Box sx={{ flex: 1, display: 'flex', position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
-          <LoginIllustrationWrapper>
+          {/* <LoginIllustrationWrapper>
             <LoginIllustration
               alt='login-illustration'
               src={`/images/pages/${imageSource}-${theme.palette.mode}.png`}
             />
-          </LoginIllustrationWrapper>
-          <FooterIllustrationsV2 />
+          </LoginIllustrationWrapper> */}
+          {/* <FooterIllustrationsV2 /> */}
+          <img src='https://surfshotsd.s3.amazonaws.com/20240126045005/3824.jpg' alt='' />
         </Box>
       ) : null}
       <RightWrapper sx={skin === 'bordered' && !hidden ? { borderLeft: `1px solid ${theme.palette.divider}` } : {}}>
@@ -275,17 +348,33 @@ const LoginPage = () => {
               </Typography>
             </Box>
             <Box sx={{ mb: 6 }}>
-              <TypographyStyled variant='h5'>{`Welcome to ${themeConfig.templateName}! 👋🏻`}</TypographyStyled>
+              <TypographyStyled variant='h5'>{`Sign in to your account`}</TypographyStyled>
               <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
             </Box>
-            <Alert icon={false} sx={{ py: 3, mb: 6, ...bgColors.primaryLight, '& .MuiAlert-message': { p: 0 } }}>
-              <Typography variant='caption' sx={{ mb: 2, display: 'block', color: 'primary.main' }}>
-                Admin: <strong>admin@materialize.com</strong> / Pass: <strong>admin</strong>
-              </Typography>
-              <Typography variant='caption' sx={{ display: 'block', color: 'primary.main' }}>
-                Client: <strong>client@materialize.com</strong> / Pass: <strong>client</strong>
-              </Typography>
-            </Alert>
+            <Box sx={{ paddingInline: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+              <GoogleLogin
+                onSuccess={credentialResponse => {
+                  responseGoogle(credentialResponse);
+                }}
+                onError={() => {
+                  console.log('Login Failed');
+                }}
+              />
+              <Box height={10}></Box>
+              <IconButton href='/' component={Link} sx={{ color: '#497ce2', border: '1px solid #82cbec', borderRadius: '50px', padding: '10px 20px' }} onClick={(e) => e.preventDefault()}>
+                <Icon icon='mdi:facebook' width={20} />
+                <Typography sx={{ ml: '7px', fontSize: '14px', fontWeight: '600' }}>Continue with Facebook</Typography>
+              </IconButton>
+            </Box>
+            <Divider
+              sx={{
+                '& .MuiDivider-wrapper': { px: 4 },
+                mt: theme => `${theme.spacing(5)} !important`,
+                mb: theme => `${theme.spacing(7.5)} !important`
+              }}
+            >
+              or
+            </Divider>
             <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
@@ -367,49 +456,6 @@ const LoginPage = () => {
                 <Typography href='/register' component={Link} sx={{ color: 'primary.main', textDecoration: 'none' }}>
                   Create an account
                 </Typography>
-              </Box>
-              <Divider
-                sx={{
-                  '& .MuiDivider-wrapper': { px: 4 },
-                  mt: theme => `${theme.spacing(5)} !important`,
-                  mb: theme => `${theme.spacing(7.5)} !important`
-                }}
-              >
-                or
-              </Divider>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <IconButton
-                  href='/'
-                  component={Link}
-                  sx={{ color: '#497ce2' }}
-                  onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                >
-                  <Icon icon='mdi:facebook' />
-                </IconButton>
-                <IconButton
-                  href='/'
-                  component={Link}
-                  sx={{ color: '#1da1f2' }}
-                  onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                >
-                  <Icon icon='mdi:twitter' />
-                </IconButton>
-                <IconButton
-                  href='/'
-                  component={Link}
-                  onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                  sx={{ color: theme => (theme.palette.mode === 'light' ? '#272727' : 'grey.300') }}
-                >
-                  <Icon icon='mdi:github' />
-                </IconButton>
-                <IconButton
-                  href='/'
-                  component={Link}
-                  sx={{ color: '#db4437' }}
-                  onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
-                >
-                  <Icon icon='mdi:google' />
-                </IconButton>
               </Box>
             </form>
           </BoxWrapper>

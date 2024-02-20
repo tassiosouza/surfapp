@@ -29,9 +29,6 @@ const HomeDashboard: FC<PageCollectionProps> = ({ className = "" }) => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
-  console.log('fetch products: ' + JSON.stringify(store.products))
-  console.log('local products: ' + JSON.stringify(PRODUCTS))
-
   return (
     <div
       className={`nc-PageCollection ${className}`}

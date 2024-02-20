@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode, useState } from 'react'
+import { ReactNode, useState, useEffect } from 'react'
 
 // ** Next Import
 import Link from 'next/link'
@@ -32,6 +32,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Hooks
 import { useSettings } from 'src/@core/hooks/useSettings'
+import { useAuth } from 'src/hooks/useAuth'
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
@@ -52,7 +53,29 @@ import { useSelector } from 'react-redux'
 import { setLoading } from 'src/store/apps/user'
 
 // ** Types
-import { RegisterParams } from 'src/context/types'
+import { LoginCallbackType, RegisterParams } from 'src/context/types'
+
+// import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
+
+// ** Next Import
+import { useRouter } from 'next/router'
+
+import { GoogleLogin } from '@react-oauth/google';
+
+import { jwtDecode } from 'jwt-decode';
+
+const StyledGoogleLogin = styled(GoogleLogin)`
+  width: 100%;
+  border-radius: 50px !important;
+  padding: 0px 10px !important;
+  border: 1px solid #82cbec !important;
+  box-shadow: none !important;
+  & span {
+    width: 70%;
+    font-weight: 600 !important;
+    font-size: 15px;
+  }
+`;
 
 // ** Styled Components
 const RegisterIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -110,10 +133,73 @@ const LinkStyled = styled(Link)(({ theme }) => ({
   color: theme.palette.primary.main
 }))
 
+interface IDecodedToken {
+  exp: number;
+  jti: string;
+  given_name: string;
+  family_name: string;
+  email: string;
+  // Add other properties as needed
+}
+
 const Register = () => {
   // ** Redux
   const dispatch = useDispatch<AppDispatch>()
   const store = useSelector((state: RootState) => state.user)
+  const auth = useAuth()
+  const router = useRouter()
+
+  // useEffect(() => {
+  //   import('gapi-script').then(({ gapi }) => {
+  //     gapi.load("client:auth2", () => {
+  //       gapi.client.init({
+  //         clientId: "253351648248-ild4se61nuetujl04edfnmjamc1n3s7a.apps.googleusercontent.com",
+  //         plugin_name: "chat",
+  //       });
+  //     });
+  //   });
+  // }, []);
+
+  const socialLoginCallback = (error: boolean, message: string, user: any, token: string, rememberMe: boolean) => {
+    auth.setUser(user)
+    window.localStorage.setItem('accessToken', token)
+    window.localStorage.setItem('userData', JSON.stringify(user))
+    router.replace('/dashboards/home')
+  }
+
+  const responseGoogle = (newResponse: any) => {
+
+    if ('credential' in newResponse) {
+      // Set loading to true in the store
+      dispatch(setLoading(true));
+      // Call the store function to register the user
+
+      const decodedToken: IDecodedToken = jwtDecode(newResponse.credential);
+
+      const response = {
+        "access_token": newResponse.credential,
+        "expires_in": decodedToken.exp,  // This value is static, replace with actual value if available
+        "id_token": decodedToken.jti,
+        "token_type": "Bearer"
+      };
+      const values = {
+        firstName: decodedToken.given_name,
+        lastName: decodedToken.family_name,
+        email: decodedToken.email,
+        password: 'defaultPassword123!',
+        agreeToTerms: true,
+        description: JSON.stringify(response),
+        imageUrl: '',
+        socialLoginCallback: socialLoginCallback
+      };
+      dispatch(setLoading(true))
+      dispatch(registerUser(values as RegisterParams))
+    }
+    else {
+      // window.alert('Google login response failed. Please try again.');
+    }
+  }
+
 
   // ** States
   const [showPassword, setShowPassword] = useState<boolean>(false)
@@ -145,11 +231,13 @@ const Register = () => {
       email: '',
       password: '',
       agreeToTerms: false,
+      description: '',
+      imageUrl: '',
+      socialLoginCallback: undefined
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
       // Handle form submission here
-      console.log(values)
       dispatch(setLoading(true))
       dispatch(registerUser(values as RegisterParams))
     },
@@ -167,13 +255,14 @@ const Register = () => {
     <Box className='content-right'>
       {!hidden ? (
         <Box sx={{ flex: 1, display: 'flex', position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
-          <RegisterIllustrationWrapper>
+          {/* <RegisterIllustrationWrapper>
             <RegisterIllustration
               alt='register-illustration'
               src={`/images/pages/${imageSource}-${theme.palette.mode}.png`}
             />
           </RegisterIllustrationWrapper>
-          <FooterIllustrationsV2 image={`/images/pages/auth-v2-register-mask-${theme.palette.mode}.png`} />
+          <FooterIllustrationsV2 image={`/images/pages/auth-v2-register-mask-${theme.palette.mode}.png`} /> */}
+          <img src='https://surfshotsd.s3.amazonaws.com/20240126045005/3824.jpg' alt='' />
         </Box>
       ) : null}
       <RightWrapper sx={skin === 'bordered' && !hidden ? { borderLeft: `1px solid ${theme.palette.divider}` } : {}}>
@@ -206,9 +295,45 @@ const Register = () => {
               </Typography>
             </Box>
             <Box sx={{ mb: 6 }}>
-              <TypographyStyled variant='h5'>Adventure starts here 🚀</TypographyStyled>
-              <Typography variant='body2'>Make your app management easy and fun!</Typography>
+              <TypographyStyled variant='h5'>Create Your Account</TypographyStyled>
+              <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                <Typography sx={{ mr: 2, color: 'text.secondary' }}>Already have an account?</Typography>
+                <Typography href='/login' component={Link} sx={{ color: 'primary.main', textDecoration: 'none' }}>
+                  Log in
+                </Typography>
+              </Box>
             </Box>
+            <Box sx={{ paddingInline: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+              {/* <StyledGoogleLogin
+                clientId={'253351648248-ild4se61nuetujl04edfnmjamc1n3s7a.apps.googleusercontent.com'}
+                buttonText="Continue with Google"
+                onSuccess={responseGoogle}
+                onFailure={responseGoogle}
+                cookiePolicy={'single_host_origin'}
+              /> */}
+              <GoogleLogin
+                onSuccess={credentialResponse => {
+                  responseGoogle(credentialResponse);
+                }}
+                onError={() => {
+                  console.log('Login Failed');
+                }}
+              />
+              <Box height={10}></Box>
+              <IconButton href='/' component={Link} sx={{ color: '#497ce2', border: '1px solid #82cbec', borderRadius: '50px', padding: '10px 20px' }} onClick={(e) => e.preventDefault()}>
+                <Icon icon='mdi:facebook' width={20} />
+                <Typography sx={{ ml: '7px', fontSize: '14px', fontWeight: '600' }}>Continue with Facebook</Typography>
+              </IconButton>
+            </Box>
+            <Divider
+              sx={{
+                '& .MuiDivider-wrapper': { px: 4 },
+                mt: theme => `${theme.spacing(5)} !important`,
+                mb: theme => `${theme.spacing(7.5)} !important`
+              }}
+            >
+              or
+            </Divider>
             <form noValidate autoComplete='off' onSubmit={formik.handleSubmit}>
               <TextField
                 autoFocus
@@ -293,40 +418,6 @@ const Register = () => {
               <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 7 }}>
                 {store.loading ? <CircularProgress size="1.6rem" sx={{ color: 'white' }} /> : 'Sign up'}
               </Button>
-              <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-                <Typography sx={{ mr: 2, color: 'text.secondary' }}>Already have an account?</Typography>
-                <Typography href='/login' component={Link} sx={{ color: 'primary.main', textDecoration: 'none' }}>
-                  Sign in instead
-                </Typography>
-              </Box>
-              <Divider
-                sx={{
-                  '& .MuiDivider-wrapper': { px: 4 },
-                  mt: theme => `${theme.spacing(5)} !important`,
-                  mb: theme => `${theme.spacing(7.5)} !important`
-                }}
-              >
-                or
-              </Divider>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <IconButton href='/' component={Link} sx={{ color: '#497ce2' }} onClick={(e) => e.preventDefault()}>
-                  <Icon icon='mdi:facebook' />
-                </IconButton>
-                <IconButton href='/' component={Link} sx={{ color: '#1da1f2' }} onClick={(e) => e.preventDefault()}>
-                  <Icon icon='mdi:twitter' />
-                </IconButton>
-                <IconButton
-                  href='/'
-                  component={Link}
-                  onClick={(e) => e.preventDefault()}
-                  sx={{ color: theme => (theme.palette.mode === 'light' ? '#272727' : 'grey.300') }}
-                >
-                  <Icon icon='mdi:github' />
-                </IconButton>
-                <IconButton href='/' component={Link} sx={{ color: '#db4437' }} onClick={(e) => e.preventDefault()}>
-                  <Icon icon='mdi:google' />
-                </IconButton>
-              </Box>
             </form>
           </BoxWrapper>
         </Box>

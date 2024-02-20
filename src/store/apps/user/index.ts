@@ -33,10 +33,6 @@ export const authenticateUser = createAsyncThunk('appUsers/authenticateUser', as
   const { error, message, data } = await performLogin(params)
   const { callback } = params
 
-  console.log('error: ' + error)
-  console.log('message: ' + message)
-  console.log('data: ' + JSON.stringify(data))
-
   return { error, message, data, params, callback }
 })
 
@@ -44,11 +40,7 @@ export const authenticateUser = createAsyncThunk('appUsers/authenticateUser', as
 export const registerUser = createAsyncThunk('appUsers/registerUser', async (params: RegisterParams) => {
   const { error, message, data } = await createUser(params)
 
-  console.log('error: ' + error)
-  console.log('message: ' + message)
-  console.log('data: ' + JSON.stringify(data))
-
-  return { error, message, data }
+  return { error, message, data, callback: params.socialLoginCallback }
 })
 
 // ** Add User
@@ -130,6 +122,16 @@ export const appUsersSlice = createSlice({
       state.message = action.payload.message
       state.showNotice = true
       state.loading = false
+
+      if (action.payload.callback && action.payload.data) {
+        action.payload.callback(
+          action.payload.error,
+          action.payload.message,
+          action.payload.data.user,
+          action.payload.data.authToken,
+          true
+        )
+      }
     })
   }
 })

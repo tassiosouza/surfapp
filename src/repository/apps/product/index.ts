@@ -101,13 +101,6 @@ export const getProducts = async () => {
     message = error.message || 'Internal server error'
   }
 
-  // Log relevant information for the combined response
-  console.log('Combined response status:', combinedResponse ? combinedResponse.status : 'N/A')
-  console.log(
-    'Users data length:',
-    combinedResponse ? combinedResponse.data.listUsersWithStoreVendorRole.length : 'N/A'
-  )
-  console.log('Products data length:', combinedResponse ? combinedResponse.data.products.nodes.length : 'N/A')
   let returnData = null
   if (combinedResponse) {
     // Map vendor information to each product

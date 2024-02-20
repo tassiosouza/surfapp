@@ -23,14 +23,16 @@ const AuthGuard = (props: AuthGuardProps) => {
         return
       }
 
-      if (auth.user === null && !window.localStorage.getItem('userData')) {
-        if (router.asPath !== '/') {
-          router.replace({
-            pathname: '/login',
-            query: { returnUrl: router.asPath }
-          })
-        } else {
-          router.replace('/login')
+      if (router.pathname != '/') {
+        if (auth.user === null && !window.localStorage.getItem('userData')) {
+          if (router.asPath !== '/') {
+            router.replace({
+              pathname: '/login',
+              query: { returnUrl: router.asPath }
+            })
+          } else {
+            router.replace('/login')
+          }
         }
       }
     },
@@ -38,11 +40,12 @@ const AuthGuard = (props: AuthGuardProps) => {
     [router.route]
   )
 
-  if (auth.loading || auth.user === null) {
+  if (auth.loading /*|| auth.user === null*/) {
     return fallback
   }
 
   return <>{children}</>
+  // return <>landing page here</>
 }
 
 export default AuthGuard
