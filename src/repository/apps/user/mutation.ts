@@ -4,6 +4,7 @@ export const LOGIN = gql`
   mutation login($input: LoginInput!) {
     login(input: $input) {
       authToken
+      refreshToken
       user {
         email
         firstName
@@ -16,6 +17,14 @@ export const LOGIN = gql`
           }
         }
       }
+    }
+  }
+`
+
+export const REFRESH_TOKEN = gql`
+  mutation refreshJwtAuthToken($jwtRefreshToken: String!) {
+    refreshJwtAuthToken(input: { jwtRefreshToken: $jwtRefreshToken }) {
+      authToken
     }
   }
 `

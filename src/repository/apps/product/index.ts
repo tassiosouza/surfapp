@@ -1,5 +1,7 @@
 import { PRODUCTS_AUTHORS } from './query'
+import { REFRESH_TOKEN } from './mutation'
 import authApolloClient from '../../auth-apollo-client'
+import apolloClient from '../../apollo-client'
 
 export const productImgs = [
   'https://surfshotsd.s3.amazonaws.com/20231231060544/surf2-scaled.jpg',
@@ -85,9 +87,44 @@ const DEMO_VARIANTS: ProductVariant[] = [
   }
 ]
 
+const DEMO_VARIANT_COLORS: ProductVariant[] = [
+  {
+    id: 1,
+    name: 'Violet',
+    color: 'bg-violet-400',
+    featuredImage: productImgs[0]
+  },
+  {
+    id: 2,
+    name: 'Yellow',
+    color: 'bg-yellow-400',
+    featuredImage: productImgs[1]
+  },
+  {
+    id: 3,
+    name: 'Orange',
+    color: 'bg-orange-400',
+    featuredImage: productImgs[2]
+  },
+  {
+    id: 4,
+    name: 'Sky Blue',
+    color: 'bg-sky-400',
+    featuredImage: productImgs[3]
+  },
+  {
+    id: 5,
+    name: 'Green',
+    color: 'bg-green-400',
+    featuredImage: productImgs[4]
+  }
+]
+
 export const getProducts = async () => {
   let combinedResponse: any = null
   let message = 'Internal server error'
+
+  await refreshJwtAuthToken()
 
   try {
     // Make a single request for both users and products
@@ -126,10 +163,10 @@ export const getProducts = async () => {
           category: 'Category 1',
           tags: ['tag1', 'tag2'],
           link: '/product-detail/',
-          variants: DEMO_VARIANTS,
-          variantType: 'image',
-          sizes: ['XS', 'S', 'M', 'L', 'XL'],
-          allOfSizes: ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'],
+          variants: DEMO_VARIANT_COLORS,
+          variantType: 'color',
+          // sizes: ['XS', 'S', 'M', 'L', 'XL'],
+          // allOfSizes: ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'],
           status: 'New in',
           vendor: {
             id: vendor?.id || null,
@@ -145,5 +182,33 @@ export const getProducts = async () => {
     error: !message.includes('success'),
     message: message,
     data: returnData
+  }
+}
+
+const refreshJwtAuthToken = async () => {
+  let response = null
+  let message = 'Internal server error'
+  const refreshToken = window.localStorage.getItem('refreshToken')
+  console.log('trying to refresh token: ' + refreshToken)
+  if (refreshToken) {
+    try {
+      response = await apolloClient.mutate({
+        mutation: REFRESH_TOKEN,
+        variables: {
+          jwtRefreshToken: refreshToken // Pass refreshToken directly
+        }
+      })
+      message = 'success'
+    } catch (e: any) {
+      message = e.message
+    }
+  }
+
+  console.log('response refresh token', response)
+
+  if (response && response.data) {
+    // Code to be executed if response.data exists
+    console.log('update auth token: ', JSON.stringify(response.data))
+    window.localStorage.setItem('authToken', response.data.refreshJwtAuthToken.authToken)
   }
 }

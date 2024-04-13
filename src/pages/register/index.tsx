@@ -160,10 +160,11 @@ const Register = () => {
   //   });
   // }, []);
 
-  const socialLoginCallback = (error: boolean, message: string, user: any, token: string, rememberMe: boolean) => {
+  const socialLoginCallback = (error: boolean, message: string, user: any, token: string, refreshToken: string, rememberMe: boolean) => {
     auth.setUser(user)
-    window.localStorage.setItem('accessToken', token)
+    window.localStorage.setItem('authToken', token)
     window.localStorage.setItem('userData', JSON.stringify(user))
+    window.localStorage.setItem('refreshToken', refreshToken);
     router.replace('/dashboards/home')
   }
 

@@ -47,7 +47,7 @@ const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
 
-      const storedToken = window.localStorage.getItem('accessToken')!
+      const storedToken = window.localStorage.getItem('authToken')!
       const userData = window.localStorage.getItem('userData')!
 
       if (router.pathname != '/') {
@@ -57,7 +57,7 @@ const AuthProvider = ({ children }: Props) => {
         } else {
           localStorage.removeItem('userData')
           localStorage.removeItem('refreshToken')
-          localStorage.removeItem('accessToken')
+          localStorage.removeItem('authToken')
           router.replace('/login')
         }
       }
@@ -69,7 +69,7 @@ const AuthProvider = ({ children }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const loginCallback = (error: boolean, message: string, user: any, token: string, rememberMe: boolean) => {
+  const loginCallback = (error: boolean, message: string, user: any, token: string, refreshToken: string, rememberMe: boolean) => {
     // set loading to false
     if (!error) {
       setPageLoading(true)
@@ -78,7 +78,8 @@ const AuthProvider = ({ children }: Props) => {
       setUser(user)
 
       if (rememberMe) {
-        window.localStorage.setItem('accessToken', token)
+        window.localStorage.setItem('authToken', token)
+        window.localStorage.setItem('refreshToken', refreshToken)
         window.localStorage.setItem('userData', JSON.stringify(user))
       }
 

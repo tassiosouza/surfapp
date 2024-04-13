@@ -46,10 +46,9 @@ const AclGuard = (props: AclGuardProps) => {
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
 
-      const storedToken = window.localStorage.getItem('accessToken')!
+      const storedToken = window.localStorage.getItem('authToken')!
       const userData = window.localStorage.getItem('userData')!
       if (storedToken && userData) {
-        console.log('refresh token')
         // auth.setUser(JSON.parse(userData))
       }
       if (router.pathname != '/') {
@@ -58,7 +57,7 @@ const AclGuard = (props: AclGuardProps) => {
         } else {
           localStorage.removeItem('userData')
           localStorage.removeItem('refreshToken')
-          localStorage.removeItem('accessToken')
+          localStorage.removeItem('authToken')
           router.replace('/login')
         }
       }

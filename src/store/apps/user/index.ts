@@ -108,6 +108,7 @@ export const appUsersSlice = createSlice({
             action.payload.message,
             state.user,
             action.payload.data.login.authToken,
+            action.payload.data.login.refreshToken,
             action.payload.params.rememberMe ? action.payload.params.rememberMe : false
           )
         }
@@ -129,6 +130,7 @@ export const appUsersSlice = createSlice({
           action.payload.message,
           action.payload.data.user,
           action.payload.data.authToken,
+          action.payload.data.refreshToken,
           true
         )
       }

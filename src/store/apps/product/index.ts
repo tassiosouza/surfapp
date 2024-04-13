@@ -8,11 +8,19 @@ interface Redux {
   dispatch: Dispatch<any>
 }
 
-// ** Fetch Users
+// ** Fetch Products
 export const fetchProducts = createAsyncThunk('appUsers/fetchData', async () => {
   const { error, message, data } = await getProducts()
 
   return { error, message, data }
+})
+
+// ** Add to cart
+export const addToCart = createAsyncThunk('appUsers/addToCart', async (params: { id: string; callback: any }) => {
+  const { id, callback } = params
+  const { error, message, data } = await getProducts()
+
+  return { error, message, data, callback }
 })
 
 export const appProductSlice = createSlice({
@@ -30,6 +38,9 @@ export const appProductSlice = createSlice({
     builder.addCase(fetchProducts.fulfilled, (state, action) => {
       state.loading = false
       state.products = action.payload.data
+    })
+    builder.addCase(addToCart.fulfilled, (state, action) => {
+      action.payload.callback()
     })
   }
 })

@@ -11,12 +11,16 @@ import { StarIcon } from "@heroicons/react/24/solid";
 import BagIcon from "./BagIcon";
 import toast from "react-hot-toast";
 import { Transition } from "@headlessui/react";
-// import ModalQuickView from "./ModalQuickView";
+import ModalQuickView from "./ModalQuickView";
 import ProductStatus from "./ProductStatus";
 import { Product, PRODUCTS } from "src/@fake-db/data/data";
 import ButtonPrimary from "../shared/Button/ButtonPrimary";
 import ButtonSecondary from "../shared/Button/ButtonSecondary";
 import NcImage from "../shared/NcImage/NcImage";
+import { CircularProgress, Typography } from "@mui/material";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from 'src/store'
+import { addToCart } from 'src/store/apps/product'
 
 export interface ProductCardProps {
   className?: string;
@@ -24,12 +28,9 @@ export interface ProductCardProps {
   isLiked?: boolean;
 }
 
-const ProductCard: FC<ProductCardProps> = ({
-  className = "",
-  data = PRODUCTS[0],
-  isLiked,
-}) => {
+const ProductCard: FC<ProductCardProps> = (data: any) => {
   const {
+    id,
     name,
     price,
     description,
@@ -38,11 +39,46 @@ const ProductCard: FC<ProductCardProps> = ({
     variantType,
     status,
     image,
-  } = data;
-  const [variantActive, setVariantActive] = React.useState(0);
-  // const [showModalQuickView, setShowModalQuickView] = React.useState(false);
+  } = data.data;
 
+  console.log(JSON.stringify(data));
+  const store = useSelector((state: RootState) => state.product)
+  const dispatch = useDispatch();
+
+  const className = "";
+  const isLiked = false;
+  const [variantActive, setVariantActive] = React.useState(0);
+  const [showModalQuickView, setShowModalQuickView] = React.useState(false);
+  const [addingToCart, setAddingToCart] = React.useState(false);
   const notifyAddTocart = ({ size }: { size?: string }) => {
+    setAddingToCart(true);
+    dispatch<any>(addToCart({ id, callback: addToCartCallback }));
+    // toast.custom(
+    //   (t) => (
+    //     <Transition
+    //       appear
+    //       show={t.visible}
+    //       className="p-4 max-w-md w-full bg-white dark:bg-slate-800 shadow-lg rounded-2xl pointer-events-auto ring-1 ring-black/5 dark:ring-white/10 text-slate-900 dark:text-slate-200"
+    //       enter="transition-all duration-150"
+    //       enterFrom="opacity-0 translate-x-20"
+    //       enterTo="opacity-100 translate-x-0"
+    //       leave="transition-all duration-150"
+    //       leaveFrom="opacity-100 translate-x-0"
+    //       leaveTo="opacity-0 translate-x-20"
+    //     >
+    //       <p className="block text-base font-semibold leading-none">
+    //         Added to cart!
+    //       </p>
+    //       <div className="border-t border-slate-200 dark:border-slate-700 my-4" />
+    //       {renderProductCartOnNotify({ size })}
+    //     </Transition>
+    //   ),
+    //   { position: "top-right", id: "nc-product-notify", duration: 3000 }
+    // );
+  };
+
+  const addToCartCallback = () => {
+    setAddingToCart(false);
     toast.custom(
       (t) => (
         <Transition
@@ -60,12 +96,12 @@ const ProductCard: FC<ProductCardProps> = ({
             Added to cart!
           </p>
           <div className="border-t border-slate-200 dark:border-slate-700 my-4" />
-          {renderProductCartOnNotify({ size })}
+          {renderProductCartOnNotify({ size: 'XS' })}
         </Transition>
       ),
       { position: "top-right", id: "nc-product-notify", duration: 3000 }
     );
-  };
+  }
 
   const renderProductCartOnNotify = ({ size }: { size?: string }) => {
     return (
@@ -98,12 +134,11 @@ const ProductCard: FC<ProductCardProps> = ({
             <p className="text-gray-500 dark:text-slate-400">Qty 1</p>
 
             <div className="flex">
-              {/* <Link
-                to={"/cart"}
-                className="font-medium text-primary-6000 dark:text-primary-500 "
+              <Typography
+                className="font-medium text-primary-6000 dark:text-primary-500 text-blue-500"
               >
                 View cart
-              </Link> */}
+              </Typography>
             </div>
           </div>
         </div>
@@ -190,26 +225,34 @@ const ProductCard: FC<ProductCardProps> = ({
 
   const renderGroupButtons = () => {
     return (
-      <div className="absolute bottom-0 group-hover:bottom-4 inset-x-1 flex justify-center opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+      <div className={`absolute bottom-0 inset-x-1 space-x-1.5 flex justify-center group-hover:bottom-4 group-hover:opacity-100 group-hover:visible transition-all ${addingToCart ? 'opacity-100 visible bottom-4' : 'opacity-0 invisible'}`}>
         <ButtonPrimary
           className="shadow-lg"
           fontSize="text-xs"
           sizeClass="py-2 px-4"
           onClick={() => notifyAddTocart({ size: "XL" })}
         >
-          <BagIcon className="w-3.5 h-3.5 mb-0.5" />
-          <span className="ml-1">Add to bag</span>
+          {addingToCart ? (
+            <>
+              <CircularProgress size={20} />
+            </>
+          ) : (<>
+            <BagIcon className="w-3.5 h-3.5 mb-0.5" />
+            <span className="ml-1">Add to bag</span>
+          </>
+          )}
+
         </ButtonPrimary>
         <ButtonSecondary
           className="ml-1.5 bg-white hover:!bg-gray-100 hover:text-slate-900 transition-colors shadow-lg"
           fontSize="text-xs"
           sizeClass="py-2 px-4"
-        // onClick={() => setShowModalQuickView(true)}
+          onClick={() => setShowModalQuickView(true)}
         >
           <ArrowsPointingOutIcon className="w-3.5 h-3.5" />
           <span className="ml-1">Quick view</span>
         </ButtonSecondary>
-      </div>
+      </div >
     );
   };
 
@@ -219,7 +262,7 @@ const ProductCard: FC<ProductCardProps> = ({
     }
 
     return (
-      <div className="absolute bottom-0 inset-x-1 space-x-1.5 flex justify-center opacity-0 invisible group-hover:bottom-4 group-hover:opacity-100 group-hover:visible transition-all">
+      <div className={`absolute bottom-0 inset-x-1 space-x-1.5 flex justify-center opacity-0 invisible group-hover:bottom-4 group-hover:opacity-100 group-hover:visible transition-all`}>
         {sizes.map((size: any, index: any) => {
           return (
             <div
@@ -260,7 +303,7 @@ const ProductCard: FC<ProductCardProps> = ({
         </div>
 
         <div className="space-y-4 px-2.5 pt-5 pb-2.5">
-          {renderVariants()}
+          {/* {renderVariants()} */}
 
           <div>
             <h2
@@ -286,11 +329,11 @@ const ProductCard: FC<ProductCardProps> = ({
         </div>
       </div>
 
-      {/* QUICKVIEW
+      {/* QUICKVIEW */}
       <ModalQuickView
         show={showModalQuickView}
         onCloseModalQuickView={() => setShowModalQuickView(false)}
-      /> */}
+      />
     </>
   );
 };
