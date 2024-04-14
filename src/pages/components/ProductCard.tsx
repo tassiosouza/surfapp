@@ -288,18 +288,18 @@ const ProductCard: FC<ProductCardProps> = (data: any) => {
 
         <div className="relative flex-shrink-0 bg-slate-50 dark:bg-slate-300 rounded-3xl overflow-hidden z-1 group">
           {/* <Link to={"/product-detail"} className="block"> */}
-          {/* <NcImage
+          <NcImage
             containerClassName="flex aspect-w-11 aspect-h-12 w-full h-0"
             src={image}
             className="object-cover w-full h-full drop-shadow-xl"
-          /> */}
+          />
           {/* </Link> */}
 
-          {/* <ProductStatus status={status} />
+          <ProductStatus status={status} />
 
           <LikeButton liked={isLiked} className="absolute top-3 right-3 z-10" />
 
-          {sizes ? renderSizeList() : renderGroupButtons()} */}
+          {sizes ? renderSizeList() : renderGroupButtons()}
         </div>
 
         <div className="space-y-4 px-2.5 pt-5 pb-2.5">
