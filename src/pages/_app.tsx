@@ -60,6 +60,8 @@ import 'react-perfect-scrollbar/dist/css/styles.css'
 
 import 'src/iconify-bundle/icons-bundle-react'
 
+import { Analytics } from "@vercel/analytics/react"
+
 // ** Global css styles
 import '../../styles/globals.css'
 
@@ -154,6 +156,7 @@ const App = (props: ExtendedAppProps) => {
               </SettingsConsumer>
             </SettingsProvider>
           </AuthProvider>
+          <Analytics />
         </GoogleOAuthProvider>
       </CacheProvider>
     </Provider >
