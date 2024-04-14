@@ -316,7 +316,7 @@ const ProductCard: FC<ProductCardProps> = (data: any) => {
             </p>
           </div>
 
-          {/* <div className="flex justify-between items-end ">
+          <div className="flex justify-between items-end ">
             <Prices price={price} />
             <div className="flex items-center mb-0.5">
               <StarIcon className="w-5 h-5 pb-[1px] text-amber-400" />
@@ -325,7 +325,7 @@ const ProductCard: FC<ProductCardProps> = (data: any) => {
                 {Math.floor(Math.random() * 70 + 20)} reviews)
               </span>
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
 
