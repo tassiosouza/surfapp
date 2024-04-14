@@ -62,7 +62,8 @@ const HomeDashboard: FC<PageCollectionProps> = ({ className = "" }) => {
             ) : (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-10 mt-8 lg:mt-10">
                 {store.products.map((product, index) => (
-                  <ProductCard data={product} key={index} />
+                  // <ProductCard data={product} key={index} />
+                  <Typography key={index}>product</Typography>
                 ))}
               </div>
             )}
