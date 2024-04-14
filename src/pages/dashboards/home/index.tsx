@@ -29,6 +29,8 @@ const HomeDashboard: FC<PageCollectionProps> = ({ className = "" }) => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
+  console.log('products', JSON.stringify(store.products));
+
   return (
     <div
       className={`nc-PageCollection ${className}`}
@@ -59,9 +61,9 @@ const HomeDashboard: FC<PageCollectionProps> = ({ className = "" }) => {
               <Typography>loading...</Typography>
             ) : (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-10 mt-8 lg:mt-10">
-                {/* {store.products.map((product, index) => (
-                  // <ProductCard data={product} key={index} />
-                ))} */}
+                {store.products.map((product, index) => (
+                  <ProductCard data={product} key={index} />
+                ))}
               </div>
             )}
 
