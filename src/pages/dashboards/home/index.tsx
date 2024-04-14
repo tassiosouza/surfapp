@@ -29,7 +29,7 @@ const HomeDashboard: FC<PageCollectionProps> = ({ className = "" }) => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
-  console.log('products', JSON.stringify(store.products));
+  console.log('products:', JSON.stringify(store.products));
 
   return (
     <div
