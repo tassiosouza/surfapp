@@ -24,10 +24,13 @@ import CrmProjectTimeline from 'src/views/dashboards/crm/CrmProjectTimeline'
 import CrmMeetingSchedule from 'src/views/dashboards/crm/CrmMeetingSchedule'
 import CrmSocialNetworkVisits from 'src/views/dashboards/crm/CrmSocialNetworkVisits'
 import CrmMostSalesInCountries from 'src/views/dashboards/crm/CrmMostSalesInCountries'
+import { Typography } from '@mui/material'
 
 const CrmDashboard = () => {
   return (
     <ApexChartWrapper>
+      <Typography>insert here the wordpress website now</Typography>
+      <iframe src={process.env.NEXT_PUBLIC_URL_CMS + "/store-manager/"} ></iframe>
       <Grid container spacing={6} className='match-height'>
         <Grid item xs={12} md={4}>
           <CrmAward />
@@ -89,7 +92,7 @@ const CrmDashboard = () => {
           <CrmTable />
         </Grid>
       </Grid>
-    </ApexChartWrapper>
+    </ApexChartWrapper >
   )
 }
 
