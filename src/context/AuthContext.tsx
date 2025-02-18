@@ -83,12 +83,12 @@ const AuthProvider = ({ children }: Props) => {
       console.log('login cookiename: ' + loggedInCookieName)
       console.log('login cookievalue: ' + loggedInCookieValue)
       console.log('installing auth cookie')
-      console.log('option domain: ' + "https://swellstep.com")
+      console.log('option domain: ' + ".swellstep.com")
       const cookies = new Cookies();
       cookies.set(loggedInCookieName, loggedInCookieValue, {
         expires: new Date(Date.now() + 3600 * 1000), // 1 hour expiry
         path: '/', // Available for all pages
-        domain: "https://swellstep.com", // Set for CMS subdomain
+        domain: ".swellstep.com", // Set for CMS subdomain
         secure: true, // Secure (HTTPS required)
       });
 
