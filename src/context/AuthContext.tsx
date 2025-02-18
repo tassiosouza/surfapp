@@ -83,7 +83,7 @@ const AuthProvider = ({ children }: Props) => {
       console.log('login cookiename: ' + loggedInCookieName)
       console.log('login cookievalue: ' + loggedInCookieValue)
       console.log('installing auth cookie')
-
+      console.log('option domain: ' + process.env.NEXT_PUBLIC_URL_CMS)
       const cookies = new Cookies();
       cookies.set(loggedInCookieName, loggedInCookieValue, {
         expires: new Date(Date.now() + 3600 * 1000), // 1 hour expiry
