@@ -160,11 +160,13 @@ const Register = () => {
   //   });
   // }, []);
 
-  const socialLoginCallback = (error: boolean, message: string, user: any, token: string, refreshToken: string, rememberMe: boolean) => {
+  const socialLoginCallback = (error: boolean, message: string, user: any, token: string, refreshToken: string, loggedInCookieName: string, loggedInCookieValue: string, rememberMe: boolean) => {
     auth.setUser(user)
     window.localStorage.setItem('authToken', token)
     window.localStorage.setItem('userData', JSON.stringify(user))
     window.localStorage.setItem('refreshToken', refreshToken);
+
+    console.log('save name: ' + loggedInCookieName + ' value: ' + loggedInCookieValue)
     router.replace('/dashboards/home')
   }
 

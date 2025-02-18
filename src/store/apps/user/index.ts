@@ -109,6 +109,8 @@ export const appUsersSlice = createSlice({
             state.user,
             action.payload.data.login.authToken,
             action.payload.data.login.refreshToken,
+            action.payload.data.login.loggedInCookieName,
+            action.payload.data.login.loggedInCookieValue,
             action.payload.params.rememberMe ? action.payload.params.rememberMe : false
           )
         }

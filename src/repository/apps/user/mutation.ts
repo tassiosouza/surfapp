@@ -5,6 +5,8 @@ export const LOGIN = gql`
     login(input: $input) {
       authToken
       refreshToken
+      loggedInCookieName
+      loggedInCookieValue
       user {
         email
         firstName

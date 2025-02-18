@@ -4,6 +4,8 @@ export type LoginCallbackType = (
   user: any,
   token: string,
   refreshToken: string,
+  loggedInCookieName: string,
+  loggedInCookieValue: string,
   rememberMe: boolean
 ) => void
 

@@ -17,6 +17,9 @@ import { useDispatch } from 'react-redux'
 import { authenticateUser, setLoading } from '../store/apps/user'
 import { AppDispatch } from 'src/store'
 
+// ** Cookie
+import Cookies from 'js-cookie';
+
 // ** Defaults
 const defaultProvider: AuthValuesType = {
   user: null,
@@ -69,13 +72,25 @@ const AuthProvider = ({ children }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const loginCallback = (error: boolean, message: string, user: any, token: string, refreshToken: string, rememberMe: boolean) => {
+  const loginCallback = (error: boolean, message: string, user: any, token: string, refreshToken: string, loggedInCookieName: string, loggedInCookieValue: string, rememberMe: boolean) => {
     // set loading to false
     if (!error) {
       setPageLoading(true)
 
       const returnUrl = router.query.returnUrl
       setUser(user)
+
+      console.log('login cookiename: ' + loggedInCookieName)
+      console.log('login cookievalue: ' + loggedInCookieValue)
+      console.log('installing auth cookie')
+
+      Cookies.set(loggedInCookieName, loggedInCookieValue, {
+        expires: 1 / 24, // 1 hour expiry
+        path: '/', // Available for all pages
+        domain: process.env.NEXT_PUBLIC_URL_CMS, // Set for CMS subdomain
+        secure: true, // Secure (HTTPS required)
+        sameSite: 'Strict', // HttpOnly (Prevents JS access)
+      });
 
       if (rememberMe) {
         window.localStorage.setItem('authToken', token)
