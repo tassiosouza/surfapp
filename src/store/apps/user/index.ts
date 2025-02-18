@@ -133,6 +133,8 @@ export const appUsersSlice = createSlice({
           action.payload.data.user,
           action.payload.data.authToken,
           action.payload.data.refreshToken,
+          action.payload.data.refreshToken,
+          action.payload.data.refreshToken,
           true
         )
       }
