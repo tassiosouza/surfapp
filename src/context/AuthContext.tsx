@@ -18,7 +18,7 @@ import { authenticateUser, setLoading } from '../store/apps/user'
 import { AppDispatch } from 'src/store'
 
 // ** Cookie
-import Cookies from 'js-cookie';
+import Cookies from 'universal-cookie';
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -84,12 +84,12 @@ const AuthProvider = ({ children }: Props) => {
       console.log('login cookievalue: ' + loggedInCookieValue)
       console.log('installing auth cookie')
 
-      Cookies.set(loggedInCookieName, loggedInCookieValue, {
-        expires: 1 / 24, // 1 hour expiry
+      const cookies = new Cookies();
+      cookies.set(loggedInCookieName, loggedInCookieValue, {
+        expires: new Date(Date.now() + 3600 * 1000), // 1 hour expiry
         path: '/', // Available for all pages
         domain: process.env.NEXT_PUBLIC_URL_CMS, // Set for CMS subdomain
         secure: true, // Secure (HTTPS required)
-        sameSite: 'Strict', // HttpOnly (Prevents JS access)
       });
 
       if (rememberMe) {
