@@ -29,8 +29,6 @@ import { Typography } from '@mui/material'
 const CrmDashboard = () => {
   return (
     <ApexChartWrapper>
-      <Typography>insert here the wordpress website now</Typography>
-      <iframe src={process.env.NEXT_PUBLIC_URL_CMS + "/store-manager/"} ></iframe>
       <Grid container spacing={6} className='match-height'>
         <Grid item xs={12} md={4}>
           <CrmAward />

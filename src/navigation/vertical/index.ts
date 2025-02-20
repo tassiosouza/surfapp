@@ -31,6 +31,11 @@ const navigation = (): VerticalNavItemsType => {
       sectionTitle: 'Apps & Pages'
     },
     {
+      title: 'Shots Upload',
+      icon: 'ic:outline-cloud-upload',
+      path: '/apps/shots-upload'
+    },
+    {
       title: 'Email',
       icon: 'mdi:email-outline',
       path: '/apps/email'
