@@ -86,7 +86,7 @@ const ShotsUpload = ({ folder, label }: MailLayoutType) => {
         ...(skin === 'bordered' && { border: `1px solid ${theme.palette.divider}` })
       }}
     >
-      <iframe width="1000px" height="1000px" src={process.env.NEXT_PUBLIC_URL_CMS} ></iframe>
+      <iframe width="1000px" height="1000px" src={process.env.NEXT_PUBLIC_URL_CMS + "/store-manager"} ></iframe>
     </Box>
   )
 }
